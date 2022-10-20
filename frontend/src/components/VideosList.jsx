@@ -1,19 +1,12 @@
 import React from 'react'
-import { useState } from 'react'
 import { VideoCard } from './VideoCard'
 import { useSelector } from 'react-redux'
-import { useEffect } from 'react'
 import { LoadingSpiner } from "./LoadingSpiner";
 
 export const VideosList = () => {
 
     const loading = useSelector(state=> state.loading)
     const videos = useSelector(state=> state.videos)
-
-    useEffect(()=>{
-        // if(videos && videos.length>0)
-        //     console.log(videos[0].watch_url)
-    }, [videos])
 
 
     return (

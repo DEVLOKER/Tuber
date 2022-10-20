@@ -12,7 +12,7 @@ import './card.css'
 
 export const VideoCard = ({videoIndex, info}) => {
 
-
+    // console.log(info.vid_info)
     return (
         <>
             <div className="card video m-3 bg-light" style={{"maxWidth": "15rem"}}>

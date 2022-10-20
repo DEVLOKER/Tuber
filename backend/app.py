@@ -1,10 +1,15 @@
 from flask import Flask, Response, redirect, stream_with_context, url_for, request, jsonify, make_response
 from Tuber import Tuber
 import requests
+from gevent.pywsgi import WSGIServer
+from waitress import serve
 
-app = Flask(__name__)
 
+app = Flask(__name__, static_folder='../frontend/build', static_url_path='/')
 
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 @app.route('/search',methods = ['POST'])
 def search():
@@ -59,20 +64,9 @@ def downloadFile():
 
     if request.method == 'POST':
         url = request.get_json()['url']
-        fileName = request.get_json()['fileName']
+        # fileName = request.get_json()['fileName']
         res = requests.get(url, stream=True)
-        # print(res.headers)
-        resp = Response(stream_with_context(generate(res)))
-        # resp.headers['Access-Control-Allow-Origin'] = '*'
-        # resp.headers['Access-Control-Allow-Origin'] = resp.calculate_content_length
-        return resp
-        """
-        with open(fileName, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=1024): 
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
-                    #f.flush() commented by recommendation from J.F.Sebastian
-        """
+        return Response(stream_with_context(generate(res)))
     else:
         return {}
 
@@ -86,5 +80,8 @@ def chunks():
 
 
 if __name__ == '__main__':
-    app.run(debug = True)
-    # app.run('0.0.0.0', 8085, debug=True)
+    # app.run(debug = True)
+    # app.run('0.0.0.0', 5000, debug=True)
+
+    serve(app, host="0.0.0.0", port=5000)
+    # WSGIServer(('', 5000), app).serve_forever() # http_server

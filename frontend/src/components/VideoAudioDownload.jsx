@@ -7,46 +7,46 @@ import ToastContainer from 'react-bootstrap/ToastContainer';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 
 import { RiVideoDownloadFill } from "@react-icons/all-files/ri/RiVideoDownloadFill";
+import { GoMute } from "@react-icons/all-files/go/GoMute";
+import { GoUnmute } from "@react-icons/all-files/go/GoUnmute";
 
 
 export const VideoAudioDownload = ({title, url}) => {
 
     const [listStreams, setListStreams] = useState([])
 
-    const getAvailableStreams = ()=>{
-        fetch(`/availableStreams`,{
-            method: 'POST',
-            body: JSON.stringify({url: url}),
-            headers: { 'Content-Type': 'application/json' },
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("HTTP status " + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            let results = JSON.parse(JSON.stringify(data))
-            // console.log(results)
-            setListStreams(results)
-        })
-        .catch((error) => {
-            console.log('an error occurred while searching : '+error.message)
-        });
-    }
+    
 
     useEffect(()=>{
+        const getAvailableStreams = ()=>{
+            console.error(url)
+            fetch(`/availableStreams`,{
+                method: 'POST',
+                body: JSON.stringify({url: url}),
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                let results = JSON.parse(JSON.stringify(data))
+                setListStreams(results)
+            })
+            .catch((error) => {
+                console.log('an error occurred while searching : '+error.message)
+            });
+        }
         getAvailableStreams()
-    }, [])
+    }, [url])
 
-    const [downloadProgress, setDownloadProgress] = useState({show: false, title: '', streamSize: 0, totalLength: 0, recievedLength: 0});
+    const [downloadProgress, setDownloadProgress] = useState({show: false, title: '', streamSize: 0, totalLength: 0, recievedLength: 0, percent: 0});
 
 
     const downloadStream = (url, filename, size, streamSize)=> {
 
-        // console.log(`size : ${size}`)
-        
-        
         const fetchFile = (url)=> {
             fetch(`/downloadFile`,{
                 method: 'POST',
@@ -64,8 +64,9 @@ export const VideoAudioDownload = ({title, url}) => {
                         const { done, value } = await reader.read();
                         if (done) break;
                         recievedLength+=value.length
-                        // console.log(`${recievedLength}/${size}`)
-                        setDownloadProgress(prevState=> {return {...prevState, recievedLength: recievedLength}} )
+                        const percent = (recievedLength / size).toFixed(2)*100
+                        // console.log(percent)
+                        setDownloadProgress(prevState=> {return {...prevState, recievedLength: recievedLength, percent:percent==="undefined"?0:percent}} )
                         controller.enqueue(value);
                     }
                     controller.close();
@@ -100,21 +101,21 @@ export const VideoAudioDownload = ({title, url}) => {
 
         fetchFile(url)
         
-        const download = ()=>{
-            const element = document.createElement('a');
-            element.setAttribute('href', url);
-            element.setAttribute('download', `${title} ${filename}`);
-            element.setAttribute('target', '_blank');
-            element.setAttribute('rel', 'noopener noreferrer');
-            element.style.display = 'none';
+        // const download = ()=>{
+        //     const element = document.createElement('a');
+        //     element.setAttribute('href', url);
+        //     element.setAttribute('download', `${title} ${filename}`);
+        //     element.setAttribute('target', '_blank');
+        //     element.setAttribute('rel', 'noopener noreferrer');
+        //     element.style.display = 'none';
         
-            document.body.appendChild(element);
-            element.click();
-            // document.execCommand('SaveAs',true,`${title} ${filename}`);
-            // document.body.removeChild(element);
-            window.URL.revokeObjectURL(url);
-            element.remove();
-        }
+        //     document.body.appendChild(element);
+        //     element.click();
+        //     // document.execCommand('SaveAs',true,`${title} ${filename}`);
+        //     // document.body.removeChild(element);
+        //     window.URL.revokeObjectURL(url);
+        //     element.remove();
+        // }
 
         // download()
     }
@@ -141,7 +142,8 @@ export const VideoAudioDownload = ({title, url}) => {
                                 if(stream.type==="video"){
                                     return (
                                         <button key={i} className="btn btn-danger btn-sm m-1" onClick={e=> downloadStream(stream.url,`[${stream.resolution}].mp4`, stream.size, stream.filesize) } >
-                                            {/* {stream.mime_type} */}
+                                            {/* {stream.codecs.length} */}
+                                            {stream?.codecs?.length>1?(<GoUnmute className='me-2' style={{width: 20, height: 20}} />): (<GoMute className='me-2' style={{width: 20, height: 20}} />)}
                                             {stream.resolution} [ { stream.filesize } ] 
                                         </button>
                                     )
@@ -157,14 +159,14 @@ export const VideoAudioDownload = ({title, url}) => {
             <ToastContainer className="p-3" position="top-start" style={{zIndex: '9999'}}>
                 <Toast onClose={() => setDownloadProgress(prevState=> {return {...prevState, show: false}} )} show={downloadProgress.show} >
                     <Toast.Header>
-                        <RiVideoDownloadFill className="rounded me-2" />
+                        <RiVideoDownloadFill className="rounded me-2" style={{width: 20, height: 20}} />
                         <strong className="me-auto text-start">{downloadProgress.title}</strong>
                         <small>{downloadProgress.streamSize}</small>
                     </Toast.Header>
                     <Toast.Body>
-                        <ProgressBar variant="danger" 
-                            now={ (downloadProgress.recievedLength / downloadProgress.totalLength).toFixed(2)*100 } 
-                            label={`${(downloadProgress.recievedLength / downloadProgress.totalLength).toFixed(2)*100}%`} 
+                        <ProgressBar striped animated variant="danger" 
+                            now={ downloadProgress.percent } 
+                            label={`${downloadProgress.percent}%`} 
                         />
                     </Toast.Body>
                 </Toast>

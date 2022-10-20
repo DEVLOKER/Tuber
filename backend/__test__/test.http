@@ -1,8 +1,5 @@
 GET http://127.0.0.1:5000/login?nm=aaaa
 
-###
-
-GET http://127.0.0.1:5000/list?nm=zzzza
 
 ###
 
@@ -12,3 +9,32 @@ Content-Type: application/json
 {
     "searchText": "http://youtube.com/watch?v=c85AhmKL-_8"
 }
+
+###
+
+POST http://localhost:5000/availableCaptions HTTP/1.1
+Content-Type: application/json
+
+{
+    "url": "http://youtube.com/watch?v=2lAe1cqCOXo"
+}
+
+###
+
+POST http://localhost:5000/captionByLanguageName HTTP/1.1
+Content-Type: application/json
+
+{
+    "code": "en",
+    "url": "http://youtube.com/watch?v=2lAe1cqCOXo"
+}
+
+###
+
+POST http://localhost:5000/downloadFile HTTP/1.1
+Content-Type: application/json
+
+{
+    "url": "https://www.youtube.com/watch?v=tPEE9ZwTmy0"
+}
+

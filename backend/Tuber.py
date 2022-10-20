@@ -182,6 +182,7 @@ class Tuber(object):
         for i, v_ in enumerate(s.results):
             searchList.append({"title": v_.title, "url": v_.watch_url})
         return searchList
+        # return s.results
 
 
 

@@ -15,8 +15,8 @@ export const Header = () => {
 
     const dispatch = useDispatch()
 
-    // const [searchText, setSearchText] = useState('http://youtube.com/watch?v=2lAe1cqCOXo')
-    const [searchText, setSearchText] = useState('https://www.youtube.com/watch?v=tPEE9ZwTmy0')
+    const [searchText, setSearchText] = useState('') // http://youtube.com/watch?v=2lAe1cqCOXo     https://www.youtube.com/watch?v=tPEE9ZwTmy0
+    // const [searchText, setSearchText] = useState('')
 
     
     const fetchVideos = ()=>{
@@ -87,7 +87,7 @@ export const Header = () => {
                     </ul> */}
                 </div>
                 <div className="form-group search w-100">
-                    <input type="text" className="form-control" placeholder="Search" defaultValue={searchText} onKeyUp={searchVideos} onChange={(e)=>setSearchText(e.target.value)} />
+                    <input type="text" className="form-control" placeholder="YouTube Video link" defaultValue={searchText} onKeyUp={searchVideos} onChange={(e)=>setSearchText(e.target.value)} />
                     <FiSearch />
                 </div>
             </div>
