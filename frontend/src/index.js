@@ -16,9 +16,9 @@ import { videosStore } from './context/redux.store'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={videosStore}>
-    <React.StrictMode>
+      {/* <React.StrictMode></React.StrictMode> */}
       <App />
-    </React.StrictMode>
+    
   </Provider>
 );
 

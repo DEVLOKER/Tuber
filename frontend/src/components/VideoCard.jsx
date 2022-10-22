@@ -1,18 +1,30 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { setSelectedVideoIndex } from '../context/redux.videos'
 import { FaClosedCaptioning } from "@react-icons/all-files/fa/FaClosedCaptioning";
 import { IoMdDownload } from "@react-icons/all-files/io/IoMdDownload";
 import { BiLike } from "@react-icons/all-files/bi/BiLike";
 import { BiDislike } from "@react-icons/all-files/bi/BiDislike";
-
 import { AiOutlinePlayCircle } from "@react-icons/all-files/ai/AiOutlinePlayCircle";
 
-import { CaptionDownload } from './CaptionDownload';
-import { VideoAudioDownload } from './VideoAudioDownload';
 import './card.css'
 
-export const VideoCard = ({videoIndex, info}) => {
+export const VideoCard = ({videoIndex, info, setShowStreams, setShowCaptions}) => {
+
+    const dispatch = useDispatch()
+
+    const handleStreamsClick = (e) => {
+        dispatch(setSelectedVideoIndex(videoIndex))
+        setShowStreams(true)
+    }
+
+    const handleCaptionsClick = (e) => {
+        dispatch(setSelectedVideoIndex(videoIndex))
+        setShowCaptions(true)
+    }
 
     // console.log(info.vid_info)
+
     return (
         <>
             <div className="card video m-3 bg-light" style={{"maxWidth": "15rem"}}>
@@ -34,22 +46,18 @@ export const VideoCard = ({videoIndex, info}) => {
                 </div>
                 <div className="card-footer text-muted d-flex justify-content-between">
                     <div>
-                        <button className="btn btn-dark btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasTop" aria-controls="offcanvasTop">
+                        <button className="btn btn-dark btn-sm" type="button" onClick={ handleCaptionsClick }>
                             <FaClosedCaptioning /> Caption
                         </button>
                         
                     </div>
                     <div>
-                        <button className="btn btn-danger btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                        <button className="btn btn-danger btn-sm" type="button" onClick={ handleStreamsClick } >
                             <IoMdDownload /> Download
                         </button>
                     </div>
                 </div>
             </div>
-
-            <CaptionDownload videoURL={info.watch_url} />
-
-            <VideoAudioDownload title={info.title} url={info.watch_url} />
 
         </>
     )

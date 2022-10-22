@@ -15,9 +15,7 @@ export const Header = () => {
 
     const dispatch = useDispatch()
 
-    const [searchText, setSearchText] = useState('') // http://youtube.com/watch?v=2lAe1cqCOXo     https://www.youtube.com/watch?v=tPEE9ZwTmy0
-    // const [searchText, setSearchText] = useState('')
-
+    const [searchText, setSearchText] = useState('') // http://youtube.com/watch?v=2lAe1cqCOXo     https://www.youtube.com/watch?v=tPEE9ZwTmy0   https://www.youtube.com/watch?v=1No0Tb3VuHA
     
     const fetchVideos = ()=>{
         dispatch(toggleLoading(true))
@@ -35,7 +33,7 @@ export const Header = () => {
             return response.json();
         })
         .then(data => {
-            let results = JSON.parse(JSON.stringify(data))
+            const results = JSON.parse(JSON.stringify(data))
             // console.log(results)
             dispatch(setVideos(results))
             dispatch(toggleLoading(false))

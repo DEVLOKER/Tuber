@@ -1,39 +1,28 @@
 import React, { useState, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import Offcanvas from 'react-bootstrap/Offcanvas';
 import { LoadingSpiner } from './LoadingSpiner'
 import './caption.css'
 
-export const CaptionDownload = ({videoURL}) => {
 
-    const [listCaptions, setListCaptions] = useState([])
-    const getAvailableCaptions = ()=>{
-        // setListCaptions([])
-        fetch(`/availableCaptions`,{
-            method: 'POST',
-            body: JSON.stringify({url: videoURL}),
-            headers: { 'Content-Type': 'application/json' },
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("HTTP status " + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            let results = JSON.parse(JSON.stringify(data))
-            // console.log(results)
-            setListCaptions(results)
-        })
-        .catch((error) => {
-            console.log('an error occurred while searching : '+error.message)
-        });
+export const CaptionDownload = ({showCaptions, setShowCaptions}) => {
+
+    const {title, watch_url: url } = useSelector(state=> state.videos.list[state.videos.index])
+
+
+    const handleHide = ()=> {
+        setShowCaptions(false)
     }
 
+    const [listCaptions, setListCaptions] = useState(null)
+
+
     const [caption, setCaption] = useState({})
-    const getCaptionByName = (code)=>{
+    const getCaptionByName = (code, name)=>{
         setCaption(null)
         fetch(`/captionByLanguageName`,{
             method: 'POST',
-            body: JSON.stringify({url: videoURL, code: code}),
+            body: JSON.stringify({url: url, code: code, name: name}),
             headers: { 'Content-Type': 'application/json' },
         })
         .then((response) => {
@@ -53,8 +42,32 @@ export const CaptionDownload = ({videoURL}) => {
     }
 
     useEffect(()=>{
-        getAvailableCaptions()
-    }, [])
+
+        const getAvailableCaptions = (url)=>{
+            // setListCaptions([])
+            fetch(`/availableCaptions`,{
+                method: 'POST',
+                body: JSON.stringify({url: url}),
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                let results = JSON.parse(JSON.stringify(data))
+                // console.log(results)
+                setListCaptions(results)
+            })
+            .catch((error) => {
+                console.log('an error occurred while searching : '+error.message)
+            });
+        }
+
+        if(showCaptions) getAvailableCaptions(url)
+    }, [url, showCaptions])
 
 
     const copyToClipboard = (e, txt)=>{
@@ -70,7 +83,7 @@ export const CaptionDownload = ({videoURL}) => {
         
         const element = document.createElement('a');
         element.setAttribute('href', fileUrl);
-        element.setAttribute('download', filename);
+        element.setAttribute('download', `${title} ${filename}`);
         element.style.display = 'none';
     
         document.body.appendChild(element);
@@ -82,20 +95,28 @@ export const CaptionDownload = ({videoURL}) => {
 
     return (
         <>
-            <div className="offcanvas offcanvas-top" tabIndex="-1" id="offcanvasTop" aria-labelledby="offcanvasTopLabel" style={{height:'100vh'}}>
-                <div className="offcanvas-header">
-                    <h5 className="offcanvas-title" id="offcanvasTopLabel">Caption Download</h5>
-                    <button type="button" className="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
-                <div className="offcanvas-body small">
+            <Offcanvas show={showCaptions} placement="top" onHide={handleHide} scroll={false} backdrop={true} style={{height:'100vh'}}>
+                <Offcanvas.Header closeButton>
+                    <Offcanvas.Title>Caption Download</Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
                     <div className='row'>
                         <div className='small'>
                         {
-                            listCaptions?.length>0?(
+                            listCaptions?(
+                                listCaptions.length==0 && 
+                                <div className="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <h6>
+                                        <p>No Caption found for :</p>
+                                        <p><strong>{title}</strong>!</p>
+                                    </h6>
+                                    <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                ||
                                 listCaptions.map((c, i)=>
                                     <React.StrictMode key={i} >
                                         <input type="radio" className="btn-check" name="listCaptions" id={`caption_${i}`} autoComplete="off" />
-                                        <label className="btn btn-outline-dark btn-sm m-1" htmlFor={`caption_${i}`} onClick={(e)=>getCaptionByName(c.code)} >{c.name}</label>
+                                        <label className="btn btn-outline-dark btn-sm m-1" htmlFor={`caption_${i}`} onClick={(e)=>getCaptionByName(c.code, c.name)} >{c.name}</label>
                                     </React.StrictMode>
                                 )
                             ):(
@@ -117,14 +138,14 @@ export const CaptionDownload = ({videoURL}) => {
                                     <div className="tab-content" id="nav-tabContent">
                                         <div className="tab-pane fade show active" id="nav-str" role="tabpanel" aria-labelledby="nav-str-tab">
                                             <div className="txt-action d-flex justify-content-center">
-                                                <button className="btn btn-danger btn-sm ms-1" id="nav-str-tab" onClick={e=>downloadCaption(caption.lang, caption.str.join('\n'))}>Download</button>
+                                                <button className="btn btn-danger btn-sm ms-1" id="nav-str-tab" onClick={e=>downloadCaption(`[${caption.name}].txt`, caption.str.join('\n'))}>Download</button>
                                                 <button className="btn btn-dark btn-sm ms-1" id="nav-str-tab" onClick={(e)=> copyToClipboard(e, caption.str.join('\n')) } >Copy</button>
                                             </div>
                                             {caption?.str.map((line, i)=><p className='text-center' key={i}>{line}</p>)}
                                         </div>
                                         <div className="tab-pane fade" id="nav-xml" role="tabpanel" aria-labelledby="nav-xml-tab">
                                             <div className="txt-action d-flex justify-content-center">
-                                                <button className="btn btn-danger btn-sm ms-1" id="nav-str-tab" onClick={e=>downloadCaption(caption.lang, caption.str.join('\n'))}>Download</button>
+                                                <button className="btn btn-danger btn-sm ms-1" id="nav-str-tab" onClick={e=>downloadCaption(`[${caption.name}].xml`, caption.str.join('\n'))}>Download</button>
                                                 <button className="btn btn-dark btn-sm ms-1" id="nav-str-tab" onClick={(e)=>copyToClipboard(e, caption.xml)} >Copy</button>
                                             </div>
                                             <pre lang="xml">
@@ -139,8 +160,8 @@ export const CaptionDownload = ({videoURL}) => {
                             )
                         }
                     </div>
-                </div>
-            </div>
+                </Offcanvas.Body>
+            </Offcanvas>
 
         </>
     )

@@ -137,10 +137,10 @@ class Tuber(object):
             langs.append({"name": caption.name, "code": caption.code})
         return langs
     
-    def getCaptionByName(self, lang_name):
+    def captionByLanguageName(self, code, name):
         try:
             # caption = self.yt_obj.captions.get(lang_name).generate_srt_captions()
-            xml_captions = self.yt_obj.captions[lang_name].xml_captions
+            xml_captions = self.yt_obj.captions[code].xml_captions
             segments = []
             root = ElementTree.fromstring(xml_captions)
             for i, child in enumerate(list(root.findall('body/p'))):
@@ -150,7 +150,7 @@ class Tuber(object):
                 line = unescape(text.replace("\n", " ").replace("  ", " "),)
                 segments.append(line)
 
-            return { "lang": lang_name, "str": segments, "xml": xml_captions } # "\n".join(segments).strip()
+            return { "code": code, "name": name, "str": segments, "xml": xml_captions } # "\n".join(segments).strip()
             
         except:  
             return None
@@ -241,6 +241,23 @@ class Tuber(object):
     @staticmethod
     def complete_function(stream, file_handle):
         print('download complelte!')
+
+
+    @staticmethod
+    def isVideoURL(text):
+        if(text.startswith(Tuber.YouTubeVideoLink1) or text.startswith(Tuber.YouTubeVideoLink2) or text.startswith(Tuber.YouTubeVideoLink3)):
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def isPlayListURL(text):
+        if(text.startswith(Tuber.YouTubePlayListLink)):
+            return True
+        else:
+            return False
+
+
 
 
 """
