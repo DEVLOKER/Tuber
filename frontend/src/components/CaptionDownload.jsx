@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import { LoadingSpiner } from './LoadingSpiner'
-import './caption.css'
+import '../style/caption.css'
 
 
 export const CaptionDownload = ({showCaptions, setShowCaptions}) => {

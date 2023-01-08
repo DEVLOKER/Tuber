@@ -1,6 +1,6 @@
 .navbar.fixed-top {
-    box-shadow: 0px 0px 7px 1px rgb(234, 22, 22);
-    background-color: rgba(167, 40, 40, 0.25);
+    box-shadow: 0px 0px 7px 1px var(--first-color);
+    background-color: var(--first-color);
 }
 .navbar.fixed-top a.navbar-brand .btn {
     padding: 2px 2px;
@@ -14,7 +14,7 @@
 {
     width: 25px;
     height: 25px;
-    color: rgb(234, 22, 22);
+    color: var(--first-color);
 }
 .navbar.fixed-bottom {
     box-shadow: 0px 0px 7px 1px #bbb;
@@ -22,8 +22,8 @@
 
 
 .form-control:focus {
-    border-color: rgb(234, 22, 22);
-    box-shadow: 0 0 0 0.2rem rgba(167, 40, 40, 0.925);
+    border-color: var(--first-color);
+    box-shadow: 0 0 0 0.2rem var(--first-color);
 }
 
 

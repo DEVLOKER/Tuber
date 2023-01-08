@@ -7,7 +7,7 @@ import { toggleLoading } from '../context/redux.loading'
 
 import { RiVideoDownloadFill } from "@react-icons/all-files/ri/RiVideoDownloadFill";
 import { FiSearch } from "@react-icons/all-files/fi/FiSearch";
-import './header.css'
+import '../style/header.css'
 import { useEffect } from 'react';
 
 
@@ -15,9 +15,10 @@ export const Header = () => {
 
     const dispatch = useDispatch()
 
-    const [searchText, setSearchText] = useState('') // http://youtube.com/watch?v=2lAe1cqCOXo     https://www.youtube.com/watch?v=tPEE9ZwTmy0   https://www.youtube.com/watch?v=1No0Tb3VuHA
+    const [searchText, setSearchText] = useState('http://youtube.com/watch?v=2lAe1cqCOXo') // http://youtube.com/watch?v=2lAe1cqCOXo     https://www.youtube.com/watch?v=tPEE9ZwTmy0   https://www.youtube.com/watch?v=1No0Tb3VuHA
     
     const fetchVideos = ()=>{
+        if(searchText.length==0) return
         dispatch(toggleLoading(true))
         dispatch(setVideos([]))
 

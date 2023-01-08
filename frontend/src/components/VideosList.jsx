@@ -8,6 +8,8 @@ import { DownloadProgress } from './DownloadProgress';
 import { CaptionDownload } from './CaptionDownload';
 
 
+import '../style/videosList.css'
+
 export const VideosList = () => {
 
     const loading = useSelector(state=> state.loading)
@@ -19,7 +21,7 @@ export const VideosList = () => {
 
     return (
         <>
-            <div className="container pt-5 pb-2 text-center d-flex flex-row justify-content-center flex-wrap">
+            <div className="container videosList pt-5 pb-2 text-center d-flex flex-row justify-content-center flex-wrap">
                 {
                     loading? (
                         <LoadingSpiner text={"Loading ..."} />

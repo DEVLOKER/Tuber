@@ -1,0 +1,36 @@
+.navbar.footer {
+    box-shadow: 0px 0px 7px 1px #AAA;
+    background-color: var(--second-color);
+    color: var(--fourth-color);
+}
+.navbar.footer div.col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: justify;
+    text-justify: inter-word;
+}
+.navbar.footer p.h6{
+    color: var(--third-color);
+}
+.navbar.footer ul{
+    text-align: left;
+    padding: 0px;
+    width: auto;
+}
+
+.navbar.footer ul.links a{
+    padding-top: 3px;
+}
+
+.navbar.footer ul.links a svg{
+    width: 25px;
+    height: 25px;
+    color: #ffffff;
+    fill: #ffffff;
+}
+
+.navbar.footer a.link {
+    color: var(--fourth-color);
+}

@@ -7,7 +7,7 @@ import { BiLike } from "@react-icons/all-files/bi/BiLike";
 import { BiDislike } from "@react-icons/all-files/bi/BiDislike";
 import { AiOutlinePlayCircle } from "@react-icons/all-files/ai/AiOutlinePlayCircle";
 
-import './card.css'
+import '../style/card.css'
 
 export const VideoCard = ({videoIndex, info, setShowStreams, setShowCaptions}) => {
 
